@@ -48,7 +48,7 @@ jobs:
           --resource-group "${{ secrets.RESOURCE_GROUP }}" \
           --vm-name "${{ secrets.VM_NAME }}" \
           --name "CustomScript" \
-          --force-update true \
+          --force-update \
           --publisher "Microsoft.Azure.Extensions" \
           --settings '{}' \
           --protected-settings @protected-settings.json
