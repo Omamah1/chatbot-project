@@ -19,7 +19,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-        cache: 'pip'  
+        cache: 'pip'
 
     # Install dependencies
     - name: Install dependencies
@@ -40,11 +40,15 @@ jobs:
     # Update the VM with secure token passing
     - name: Azure VM Update
       run: |
+        echo "{
+          \"commandToExecute\": \"export GITHUB_TOKEN=${{ secrets.TOKEN }} && sudo -u azureuser bash /home/azureuser/chatbot-project/update_app.sh\"
+        }" > protected-settings.json
+
         az vm extension set \
-          --resource-group ${{ secrets.RESOURCE_GROUP }} \
-          --vm-name ${{ secrets.VM_NAME }} \
-          --name CustomScript \
-          --force-update \
-          --publisher Microsoft.Azure.Extensions \
-          --settings '{"fileUris": []}' \
-          --protected-settings '{"commandToExecute": "export GITHUB_TOKEN=${{ secrets.TOKEN }} && sudo -u azureuser bash /home/azureuser/chatbot-project/update_app.sh"}'
+          --resource-group "${{ secrets.RESOURCE_GROUP }}" \
+          --vm-name "${{ secrets.VM_NAME }}" \
+          --name "CustomScript" \
+          --force-update true \
+          --publisher "Microsoft.Azure.Extensions" \
+          --settings '{}' \
+          --protected-settings @protected-settings.json
