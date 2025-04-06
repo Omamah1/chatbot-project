@@ -39,5 +39,6 @@ jobs:
 
     # Update the VM with secure token passing
     - name: Azure VM Update
-      run: az vm extension set --resource-group "${{ secrets.RESOURCE_GROUP }}" --vm-name "${{ secrets.VM_NAME }}" --name "CustomScript" --publisher "Microsoft.Azure.Extensions" --force-update --settings '{"fileUris":[]}' \
-        --protected-settings '{"commandToExecute":"export GITHUB_TOKEN=${{ secrets.TOKEN }} && sudo -u azureuser bash /home/azureuser/chatbot-project/update_app.sh"}'
+      run: | 
+         echo '{"commandToExecute": "bash -c \"export GITHUB_TOKEN=${{ secrets.TOKEN }} && sudo -u azureuser bash /home/azureuser/chatbot-project/update_app.sh\""}' > protected-settings.json
+         az vm extension set --resource-group "${{ secrets.RESOURCE_GROUP }}" --vm-name "${{ secrets.VM_NAME }}" --name "CustomScript" --publisher "Microsoft.Azure.Extensions" --force-update --settings '{"fileUris": []}' --protected-settings protected-settings.json
