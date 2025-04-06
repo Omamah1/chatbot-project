@@ -40,9 +40,7 @@ jobs:
     # Update the VM with secure token passing
     - name: Azure VM Update
       run: |
-        COMMAND='{
-          "commandToExecute": "export GITHUB_TOKEN=${{ secrets.TOKEN }} && sudo -u azureuser bash /home/azureuser/chatbot-project/update_app.sh"
-        }'
+        COMMAND="{\"commandToExecute\": \"export GITHUB_TOKEN=${{ secrets.TOKEN }} && sudo -u azureuser bash /home/azureuser/chatbot-project/update_app.sh\"}"
 
         az vm extension set \
           --resource-group "${{ secrets.RESOURCE_GROUP }}" \
