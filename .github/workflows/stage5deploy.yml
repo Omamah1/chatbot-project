@@ -19,39 +19,32 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-        cache: 'pip'
+        cache: 'pip'  
 
     # Install dependencies
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
 
-    # Run tests (اختياري - تقدر تضيف سكربت فعلي هنا)
+    # Run tests
     - name: Run tests
       run: |
         echo "Run tests"
 
-    # Azure Login
+    # Login to Azure
     - name: Azure Login
-      uses: azure/login@v2
+      uses: azure/login@v2.2.0
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # Create protected settings JSON file
-    - name: Create protected settings file
-      run: |
-        echo '{
-          "commandToExecute": "export GITHUB_TOKEN=${{ secrets.TOKEN }} && sudo -u azureuser bash /home/azureuser/chatbot-project/update_app.sh"
-        }' > protected-settings.json
-
-    # Run Custom Script Extension on Azure VM
+    # Update the VM with secure token passing
     - name: Azure VM Update
       run: |
         az vm extension set \
-          --resource-group "${{ secrets.RESOURCE_GROUP }}" \
-          --vm-name "${{ secrets.VM_NAME }}" \
-          --name "CustomScript" \
+          --resource-group ${{ secrets.RESOURCE_GROUP }} \
+          --vm-name ${{ secrets.VM_NAME }} \
+          --name CustomScript \
           --force-update \
-          --publisher "Microsoft.Azure.Extensions" \
-          --settings '{}' \
-          --protected-settings @protected-settings.json
+          --publisher Microsoft.Azure.Extensions \
+          --settings '{"fileUris": []}' \
+          --protected-settings '{"commandToExecute": "export GITHUB_TOKEN=${{ secrets.TOKEN }} && sudo -u azureuser bash /home/azureuser/chatbot-project/update_app.sh"}'
