@@ -38,7 +38,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     # Update the VM with secure token passing
-    - name: Azure VM Update
+    - name: Azure VMSS Update
       run: |
         az vmss extension set \
           --resource-group ${{ secrets.RESOURCE_GROUP }} \
